@@ -680,7 +680,7 @@ const questionList = [
     id: 55,
     type: 'single',
     chapter: '第6-8章小测',
-    question: '',
+    question: 'QPSK信号解调时',
     options: [
       { key: 'A', text: '存在180度相位模糊问题' },
       { key: 'B', text: '存在90度相位模糊问题' },
