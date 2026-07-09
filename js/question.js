@@ -83,7 +83,7 @@ const questionList = [
     id: 6,
     type: 'judge',
     chapter: '第1-2章小测',
-    question: '消息中所含信息量的多少与消息的种类无关（ ）。   对         错',
+    question: '消息中所含信息量的多少与消息的种类无关（ ）。',
     answer: 'A',
     explanation: '7.【判断题】（1分）',
     image: ''
@@ -92,7 +92,7 @@ const questionList = [
     id: 7,
     type: 'judge',
     chapter: '第1-2章小测',
-    question: '高斯白噪声通常是指噪声的功率谱密度服从高斯分布（ ）。    对    错',
+    question: '高斯白噪声通常是指噪声的功率谱密度服从高斯分布（ ）。',
     answer: 'B',
     explanation: '',
     image: ''
@@ -101,7 +101,7 @@ const questionList = [
     id: 8,
     type: 'judge',
     chapter: '第1-2章小测',
-    question: '通信系统中不管有没有信号，加性噪声是始终存在的（ ）。    对    错',
+    question: '通信系统中不管有没有信号，加性噪声是始终存在的（ ）。',
     answer: 'A',
     explanation: '',
     image: ''
@@ -110,7 +110,7 @@ const questionList = [
     id: 9,
     type: 'judge',
     chapter: '第1-2章小测',
-    question: '两个周期信号相加也一定是周期信号（ ）。    对    错',
+    question: '两个周期信号相加也一定是周期信号（ ）。',
     answer: 'B',
     explanation: '',
     image: ''
@@ -119,7 +119,7 @@ const questionList = [
     id: 10,
     type: 'judge',
     chapter: '第1-2章小测',
-    question: '若矩形脉冲信号的宽度加宽，则它的频谱带宽也加宽（ ）。    对    错',
+    question: '若矩形脉冲信号的宽度加宽，则它的频谱带宽也加宽（ ）。',
     answer: 'B',
     explanation: '',
     image: ''
@@ -128,7 +128,7 @@ const questionList = [
     id: 11,
     type: 'judge',
     chapter: '第1-2章小测',
-    question: '周期信号的频谱是离散谱，非周期信号的频谱是连续谱   对         错',
+    question: '周期信号的频谱是离散谱，非周期信号的频谱是连续谱',
     answer: 'A',
     explanation: '',
     image: ''
@@ -137,9 +137,9 @@ const questionList = [
     id: 12,
     type: 'calc',
     chapter: '第1-2章小测',
-    question: '已知随机过程  其中A  f0为常数,随机相位θ在[0,2π]内均匀分布， 自相 关函数为  求X(t)的功率谱密度及平均功率。',
-    answer: '',
-    explanation: '',
+    question: '已知随机过程X(t)=Acos(2πf0t+θ)其中A  f0为常数,随机相位θ在[0,2π]内均匀分布， 自相关函数为RX(τ)=A22cos2πf0τ，求X(t)的功率谱密度及平均功率。',
+    answer: 'X(t)功率谱密度 P_X(f)=(A²/4)[δ(f-f₀)+δ(f+f₀)]，平均功率 P=A²/2',
+    explanation: '由维纳-辛钦定理，功率谱密度是自相关函数的傅里叶变换',
     image: ''
   },
   {
@@ -221,7 +221,7 @@ const questionList = [
     id: 18,
     type: 'judge',
     chapter: '第3章小测',
-    question: 'DSB和SSB解调只能采用相干解调（ ）。  对         错',
+    question: 'DSB和SSB解调只能采用相干解调（ ）。',
     answer: 'A',
     explanation: '',
     image: ''
@@ -230,7 +230,7 @@ const questionList = [
     id: 19,
     type: 'judge',
     chapter: '第3章小测',
-    question: '通信系统的噪声只存在于信道中（ ）。    对   错',
+    question: '通信系统的噪声只存在于信道中（ ）。',
     answer: 'B',
     explanation: '',
     image: ''
@@ -239,7 +239,7 @@ const questionList = [
     id: 20,
     type: 'judge',
     chapter: '第3章小测',
-    question: 'DSB调制信号的制度增益是SSB的一倍，所以其抗噪声性能比SSB好一倍（ ）。  对         错',
+    question: 'DSB调制信号的制度增益是SSB的一倍，所以其抗噪声性能比SSB好一倍（ ）。',
     answer: 'B',
     explanation: '',
     image: ''
@@ -338,7 +338,7 @@ const questionList = [
     id: 27,
     type: 'judge',
     chapter: '第4-5章小测',
-    question: '理论上无限长的横向均衡器可以完全消除抽样时刻上的码间串扰（ ）。    对    错',
+    question: '理论上无限长的横向均衡器可以完全消除抽样时刻上的码间串扰（ ）。',
     answer: 'A',
     explanation: '',
     image: ''
@@ -347,7 +347,7 @@ const questionList = [
     id: 28,
     type: 'judge',
     chapter: '第4-5章小测',
-    question: '当脉冲宽度相同时 ,升余弦脉冲信号的带宽是矩形脉冲信号带宽的2倍。    对    错',
+    question: '当脉冲宽度相同时 ,升余弦脉冲信号的带宽是矩形脉冲信号带宽的2倍。',
     answer: 'A',
     explanation: '',
     image: ''
@@ -356,7 +356,7 @@ const questionList = [
     id: 29,
     type: 'judge',
     chapter: '第4-5章小测',
-    question: '眼图张开越大，信号传输质量越好（ ）。     对    错',
+    question: '眼图张开越大，信号传输质量越好（ ）。',
     answer: 'A',
     explanation: '',
     image: ''
@@ -365,7 +365,7 @@ const questionList = [
     id: 30,
     type: 'judge',
     chapter: '第4-5章小测',
-    question: 'DSB调制信号的制度增益是SSB的一倍，所以其抗噪声性能比SSB好一倍（ ）。    对    错',
+    question: 'DSB调制信号的制度增益是SSB的一倍，所以其抗噪声性能比SSB好一倍（ ）。',
     answer: 'B',
     explanation: '',
     image: ''
@@ -374,7 +374,7 @@ const questionList = [
     id: 31,
     type: 'judge',
     chapter: '第4-5章小测',
-    question: 'AM的解调即可以采用包络解调 ,也可以采用相干解调。   对         错',
+    question: 'AM的解调即可以采用包络解调 ,也可以采用相干解调。',
     answer: 'A',
     explanation: '',
     image: ''
@@ -383,7 +383,7 @@ const questionList = [
     id: 32,
     type: 'judge',
     chapter: '第4-5章小测',
-    question: '多进制线性调制可以提高频带利用率。   对         错',
+    question: '多进制线性调制可以提高频带利用率。',
     answer: 'A',
     explanation: '',
     image: ''
@@ -392,7 +392,7 @@ const questionList = [
     id: 33,
     type: 'judge',
     chapter: '第4-5章小测',
-    question: '数字基带信号的功率谱形状仅取决于数字基带信号的码型。   对         错',
+    question: '数字基带信号的功率谱形状仅取决于数字基带信号的码型。',
     answer: 'B',
     explanation: '',
     image: ''
@@ -401,7 +401,7 @@ const questionList = [
     id: 34,
     type: 'judge',
     chapter: '第4-5章小测',
-    question: '数字基带信号的功率谱形状仅取决于数字基带信号的波形   对         错',
+    question: '数字基带信号的功率谱形状仅取决于数字基带信号的波形',
     answer: 'B',
     explanation: '',
     image: ''
@@ -410,7 +410,7 @@ const questionList = [
     id: 35,
     type: 'judge',
     chapter: '第4-5章小测',
-    question: '双极性数字基带信号功率谱的第一个零点频率是矩形波宽度的倒数。   对         错',
+    question: '双极性数字基带信号功率谱的第一个零点频率是矩形波宽度的倒数。',
     answer: 'A',
     explanation: '',
     image: ''
@@ -420,27 +420,27 @@ const questionList = [
     type: 'calc',
     chapter: '第4-5章小测',
     question: '已知调制信号m(t)=cos2000πt,载波为2cos10000πt ，分别画出DSB、SSB （下边带）信号的频谱。',
-    answer: '',
-    explanation: '',
-    image: ''
+    answer: 'DSB频谱：载频10kHz处有冲激，±4kHz边带各一对冲激；SSB下边带：仅保留载频以下频谱分量（见题图）',
+    explanation: 'DSB含上下边带对称频谱，SSB仅取一个边带',
+    image: '图片1.png'
   },
   {
     id: 37,
     type: 'calc',
     chapter: '第4-5章小测',
     question: '已知矩形、升余弦传输特性如下图所示。当采用以下速率传输时，指出哪些是无码间干扰的，哪些会引起码间干扰？ （1） RS=1000Baud, （2） RS=2000Baud, （3） RS=1500Baud, （4） RS=3000Baud',
-    answer: '',
+    answer: '理想低通滤波器带宽为1000Hz ，此系统所有的无码间干扰速率有2×1000/n(n=1,2,3, …),当n=1,2时得无码间干扰速率为2000Baud和1000Baud。所以这两个速率无码间干扰，而RS=1500Baud和RS=3000Baud则有码间干扰。当升余弦特性带宽为2000Hz ，其所有的无码间干扰速率2×2000/n(n=2,3,4, …), 所以2000Baud和1000Baud是无码间干扰的，而RS=1500Baud和RS=3000Baud则有码间干扰。',
     explanation: '',
-    image: ''
+    image: '图片2.png'
   },
   {
     id: 38,
     type: 'calc',
     chapter: '第4-5章小测',
     question: '已知HDB3码波形如下图所示，求其原基带信息。',
-    answer: '',
+    answer: '101100001100000000',
     explanation: '',
-    image: ''
+    image: '图片3.png'
   },
   {
     id: 39,
@@ -583,8 +583,8 @@ const questionList = [
     chapter: '第6-8章小测',
     question: 'ASK、 FSK、 PSK、QAM信号中可采用非相干解调的频带信号是（ ）。',
     options: [
-      { key: 'A', text: 'ASK、 FSK' },
-      { key: 'B', text: 'FSK、 PSK' },
+      { key: 'A', text: 'ASK、FSK' },
+      { key: 'B', text: 'FSK、PSK' },
       { key: 'C', text: 'PSK、QAM' },
       { key: 'D', text: 'ASK、QAM' },
     ],
@@ -596,8 +596,9 @@ const questionList = [
     id: 49,
     type: 'single',
     chapter: '第6-8章小测',
-    question: '对于2PSK采用直接法载波同步会带来载波相位模糊是（ ）。    90∘和180∘不定',
+    question: '对于2PSK采用直接法载波同步会带来载波相位模糊是（ ）。    ',
     options: [
+      { key: 'A', text: '90∘和180∘不定' },
       { key: 'B', text: '0∘和180∘不定' },
       { key: 'C', text: '0∘和90∘不定' },
       { key: 'D', text: '90∘和360∘不定' },
@@ -684,7 +685,7 @@ const questionList = [
     id: 55,
     type: 'judge',
     chapter: '第6-8章小测',
-    question: 'MQAM和MPSK具有相同的频带利用率   对         错',
+    question: 'MQAM和MPSK具有相同的频带利用率',
     answer: 'A',
     explanation: '',
     image: ''
@@ -693,7 +694,7 @@ const questionList = [
     id: 56,
     type: 'judge',
     chapter: '第6-8章小测',
-    question: 'QPSK调制方式中当信码从00变为11时，或者从11变为00时，其相位跳变均为180度。   对         错',
+    question: 'QPSK调制方式中当信码从00变为11时，或者从11变为00时，其相位跳变均为180度。',
     answer: 'A',
     explanation: '',
     image: ''
@@ -702,7 +703,7 @@ const questionList = [
     id: 57,
     type: 'judge',
     chapter: '第6-8章小测',
-    question: 'QPSK的最大相位跳变是90度。     对    错',
+    question: 'QPSK的最大相位跳变是90度',
     answer: 'B',
     explanation: '',
     image: ''
@@ -711,7 +712,7 @@ const questionList = [
     id: 58,
     type: 'judge',
     chapter: '第6-8章小测',
-    question: '增量调制系统中如果量化台阶选大有利于减小过载噪声 ，但一般量化噪声增大。    对    错',
+    question: '增量调制系统中如果量化台阶选大有利于减小过载噪声 ，但一般量化噪声增大。',
     answer: 'A',
     explanation: '',
     image: ''
@@ -720,7 +721,7 @@ const questionList = [
     id: 59,
     type: 'judge',
     chapter: '第6-8章小测',
-    question: '增量调制系统中减小过载噪声的方法之一是选择大的抽样速率fs    对    错',
+    question: '增量调制系统中减小过载噪声的方法之一是选择大的抽样速率fs',
     answer: 'A',
     explanation: '',
     image: ''
@@ -729,7 +730,7 @@ const questionList = [
     id: 60,
     type: 'judge',
     chapter: '第6-8章小测',
-    question: '均匀量化时量化噪声功率N q大小与信号样值大小无关，仅与量化间隔   V 有关。    对    错',
+    question: '均匀量化时量化噪声功率N q大小与信号样值大小无关，仅与量化间隔   V 有关。',
     answer: 'A',
     explanation: '',
     image: ''
@@ -738,7 +739,7 @@ const questionList = [
     id: 61,
     type: 'judge',
     chapter: '第6-8章小测',
-    question: '如果信噪比r一定，相同调制方式时有    对         错',
+    question: '如果信噪比r一定，相同调制方式时有Pe相干<Pe非相干.',
     answer: 'A',
     explanation: '',
     image: ''
@@ -747,7 +748,7 @@ const questionList = [
     id: 62,
     type: 'judge',
     chapter: '第6-8章小测',
-    question: '多进制数字调制随着M增大，相邻信号点的距离会逐渐减小，抗噪声性能会下降。   对         错',
+    question: '多进制数字调制随着M增大，相邻信号点的距离会逐渐减小，抗噪声性能会下降。',
     answer: 'A',
     explanation: '',
     image: ''
@@ -756,7 +757,7 @@ const questionList = [
     id: 63,
     type: 'judge',
     chapter: '第6-8章小测',
-    question: 'QPSK调制方式中载波相位与基带信号双比特的关系是唯一的。     对   错',
+    question: 'QPSK调制方式中载波相位与基带信号双比特的关系是唯一的。',
     answer: 'B',
     explanation: '',
     image: ''
@@ -765,7 +766,7 @@ const questionList = [
     id: 64,
     type: 'judge',
     chapter: '第6-8章小测',
-    question: '2ASK、2PSK、2FSK频带信号的带宽都是其数字基带调制信号带宽的两倍（ ）。    对    错',
+    question: '2ASK、2PSK、2FSK频带信号的带宽都是其数字基带调制信号带宽的两倍（ ）。',
     answer: 'B',
     explanation: '',
     image: ''
@@ -774,7 +775,7 @@ const questionList = [
     id: 65,
     type: 'judge',
     chapter: '第6-8章小测',
-    question: '量化时采用的量化台阶数越多其量化信噪比就越小。    对    错',
+    question: '量化时采用的量化台阶数越多其量化信噪比就越小。',
     answer: 'B',
     explanation: '',
     image: ''
@@ -783,7 +784,7 @@ const questionList = [
     id: 66,
     type: 'judge',
     chapter: '第6-8章小测',
-    question: '4DPSK解调器既可以采用相干解调+码反变换，也可以采用差分相干解调。  对         错',
+    question: '4DPSK解调器既可以采用相干解调+码反变换，也可以采用差分相干解调。',
     answer: 'A',
     explanation: '',
     image: ''
@@ -792,7 +793,7 @@ const questionList = [
     id: 67,
     type: 'judge',
     chapter: '第6-8章小测',
-    question: '2DPSK解调器可以采用差分相干解调，但4DPSK不可以采用差分相干解调。   对         错',
+    question: '2DPSK解调器可以采用差分相干解调，但4DPSK不可以采用差分相干解调。',
     answer: 'B',
     explanation: '',
     image: ''
@@ -801,7 +802,7 @@ const questionList = [
     id: 68,
     type: 'judge',
     chapter: '第6-8章小测',
-    question: 'QPSK调制方式中当信码从01变为10时，其相位跳变90度。     对   错',
+    question: 'QPSK调制方式中当信码从01变为10时，其相位跳变90度。',
     answer: 'B',
     explanation: '',
     image: ''
@@ -810,17 +811,20 @@ const questionList = [
     id: 69,
     type: 'judge',
     chapter: '第6-8章小测',
-    question: '多进制线性调制可以提高频带利用率。  对         错',
+    question: '多进制线性调制可以提高频带利用率。',
     answer: 'A',
     explanation: '',
     image: ''
   },
 ];
-// 首次加载时缓存到localStorage
+// 首次加载时缓存到localStorage（版本号 v2：强制刷新含图片路径的题库）
 (function() {
   try {
-    if (!localStorage.getItem('csp_cache')) {
+    var cacheVer = localStorage.getItem('csp_cache_ver');
+    if (!localStorage.getItem('csp_cache') || cacheVer !== '2') {
       localStorage.setItem('csp_cache', JSON.stringify(questionList));
+      localStorage.setItem('csp_cache_ver', '2');
+      console.log('题库缓存已更新 v2 (' + questionList.length + ' 题)');
     }
   } catch(e) {
     console.warn('题库缓存失败:', e.message);

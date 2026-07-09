@@ -112,6 +112,10 @@
     <div class="setting-group">
       <h3>📝 刷题行为配置</h3>
       <div class="setting-row">
+        <div><div class="setting-label">答对自动切题延迟（毫秒）</div><div class="setting-desc">答对后等待此时间再切下一题，设为0则立即切换</div></div>
+        <input type="number" id="cfgAutoNextDelay" value="300" min="0" max="3000" step="100" onchange="updateSetting('autoNextDelay', parseInt(this.value))" style="width:100px;text-align:center;min-height:48px;">
+      </div>
+      <div class="setting-row">
         <div><div class="setting-label">快捷键开关</div><div class="setting-desc">关闭防止误触</div></div>
         <label class="toggle"><input type="checkbox" id="cfgShortcutEnabled" onchange="updateSetting('shortcutEnabled', this.checked)"><span class="slider"></span></label>
       </div>
@@ -219,6 +223,7 @@ function loadSettings() {
   document.getElementById('cfgAutoArchive').checked = cfg.autoArchive;
   document.getElementById('cfgArchiveDays').value = cfg.archiveDays;
   document.getElementById('cfgWeakThreshold').value = cfg.weakThreshold;
+  document.getElementById('cfgAutoNextDelay').value = cfg.autoNextDelay || 300;
   document.getElementById('cfgShortcutEnabled').checked = cfg.shortcutEnabled;
   document.getElementById('cfgExitBehavior').value = cfg.exitBehavior;
   document.getElementById('cfgScoreSingle').value = cfg.scoreSingle;

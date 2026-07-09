@@ -35,7 +35,8 @@ const Storage = (() => {
     scoreSingle: 2,
     scoreJudge: 1,
     scoreCalc: 6,
-    weakThreshold: 2
+    weakThreshold: 2,
+    autoNextDelay: 300
   };
   // ===== 配置操作 =====
   function getConfig() {

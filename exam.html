@@ -74,48 +74,60 @@
 <script src="js/common.js"></script>
 <script>
 // ===== 全局状态 =====
-let questions = [];
+let allQuestions = [];       // 所有题目（按筛选后的池子）
+let questions = [];           // 当前展示顺序（可能随机打乱后）
 let currentIndex = 0;
-let answered = {}; // { qid: true/false } true=correct, false=wrong
+let answered = {};            // { qid: true/false } true=correct, false=wrong
 let showAnswer = false;
 let isRandom = true;
 let currentFilter = 'all';
 let currentQuestion = null;
-let shuffledOptMap = null;
-let shuffledNewAnswer = null;
+// 缓存每题的打乱选项映射：{ qid: { options, map, newAnswer } }
+let shuffledCache = {};
 // ===== 初始化 =====
-function initExam() {
+function initExam(keepFilter) {
   const params = new URLSearchParams(window.location.search);
   const typeParam = params.get('type');
   const modeParam = params.get('mode');
+  // 筛选题目池
   if (modeParam === 'weak') {
     const threshold = Storage.getConfig().weakThreshold;
-    questions = App.getWeakQuestions(threshold);
-    if (questions.length === 0) {
+    allQuestions = App.getWeakQuestions(threshold);
+    if (allQuestions.length === 0) {
       App.showToast('暂无薄弱题目，请先刷题积累数据', 'error');
-      questions = App.validQuestions();
+      allQuestions = App.validQuestions();
     }
-  } else if (typeParam && typeParam !== 'all') {
-    questions = App.filterByType(App.validQuestions(), typeParam);
   } else {
-    questions = App.validQuestions();
+    allQuestions = App.validQuestions();
   }
-  if (isRandom) questions = App.shuffle(questions);
+  // 题型筛选
+  if (!keepFilter) {
+    currentFilter = typeParam || 'all';
+  }
+  if (currentFilter && currentFilter !== 'all') {
+    questions = App.filterByType(allQuestions, currentFilter);
+  } else {
+    questions = [...allQuestions];
+  }
+  // 随机打乱
+  if (isRandom) {
+    questions = App.shuffle(questions);
+  }
   currentIndex = 0;
-  currentFilter = typeParam || 'all';
   answered = {};
+  shuffledCache = {};
+  showAnswer = false;
   updateBadges();
   renderQuestion();
   updateProgress();
 }
 function updateBadges() {
   const types = ['all', 'single', 'judge', 'calc'];
-  const labels = ['全部', '单选', '判断', '计算'];
-  types.forEach((t, i) => {
+  types.forEach((t) => {
     const el = document.getElementById('filter' + t.charAt(0).toUpperCase() + t.slice(1));
     if (el) {
       el.style.opacity = currentFilter === t ? '1' : '0.5';
-      el.onclick = () => { currentFilter = t; initExam(); };
+      el.onclick = () => { currentFilter = t; initExam(true); };
     }
   });
 }
@@ -128,7 +140,7 @@ function toggleTheme() {
 function toggleShuffle() {
   isRandom = !isRandom;
   document.getElementById('shuffleBtn').style.background = isRandom ? 'var(--primary-light)' : '';
-  initExam();
+  initExam(true);
 }
 function toggleStar() {
   if (!currentQuestion) return;
@@ -139,6 +151,11 @@ function updateStarBtn(collected) {
   const btn = document.getElementById('starBtn');
   btn.textContent = collected ? '★' : '☆';
   btn.classList.toggle('active', collected);
+}
+// ===== 获取防抖延迟 =====
+function getDebounceDelay() {
+  const cfg = Storage.getConfig();
+  return cfg.autoNextDelay ?? 300;
 }
 // ===== 渲染题目 =====
 function renderQuestion() {
@@ -175,23 +192,17 @@ function renderQuestion() {
   const explDiv = document.getElementById('qExplanation');
   explDiv.style.display = showAnswer && q.explanation ? '' : 'none';
   if (showAnswer) {
-    ansDiv.innerHTML = '<strong>参考答案：</strong>' + (q.type === 'single' ? q.answer : q.type === 'judge' ? (q.answer === 'A' ? '对' : '错') : q.answer);
-    if (q.explanation) explDiv.innerHTML = '<strong>解析：</strong>' + q.explanation;
+    updateAnswerDisplay();
   }
   // 历史记录
   updateHistory();
   // 收藏状态
   updateStarBtn(Storage.isCollected(q.id));
-  // 标记已作答
-  if (answered[q.id] !== undefined) {
-    if (q.type === 'single') renderSingleOptions(true);
-    else if (q.type === 'judge') renderJudgeButtons(true);
-    else if (q.type === 'calc') renderCalcInput(true);
-  } else {
-    if (q.type === 'single') renderSingleOptions(false);
-    else if (q.type === 'judge') renderJudgeButtons(false);
-    else if (q.type === 'calc') renderCalcInput(false);
-  }
+  // 渲染答题区域
+  const isAnswered = answered[q.id] !== undefined;
+  if (q.type === 'single') renderSingleOptions(isAnswered);
+  else if (q.type === 'judge') renderJudgeButtons(isAnswered);
+  else if (q.type === 'calc') renderCalcInput(isAnswered);
   // 快捷键提示
   updateShortcutHint();
   // 启动计时
@@ -211,6 +222,22 @@ function renderQuestion() {
   // 设置快捷键
   App.enableShortcuts(handleShortcut);
 }
+function updateAnswerDisplay() {
+  const q = currentQuestion;
+  if (!q) return;
+  const ansDiv = document.getElementById('qAnswer');
+  const explDiv = document.getElementById('qExplanation');
+  if (q.type === 'calc') {
+    ansDiv.innerHTML = '<strong>参考答案：</strong>' + q.answer.replace(/\n/g, '<br>');
+  } else if (q.type === 'judge') {
+    ansDiv.innerHTML = '<strong>参考答案：</strong>' + (q.answer === 'A' ? '对 ✓' : '错 ✗');
+  } else {
+    ansDiv.innerHTML = '<strong>参考答案：</strong>' + q.answer;
+  }
+  if (q.explanation) explDiv.innerHTML = '<strong>解析：</strong>' + q.explanation;
+  ansDiv.style.display = '';
+  explDiv.style.display = q.explanation ? '' : 'none';
+}
 function updateShortcutHint() {
   const q = currentQuestion;
   if (!q) return;
@@ -221,83 +248,99 @@ function updateShortcutHint() {
   hint += ' | <kbd>←</kbd><kbd>→</kbd> 切题 | <kbd>Space</kbd> 答案';
   document.getElementById('shortcutHint').innerHTML = hint;
 }
-function renderSingleOptions(answered) {
+// ===== 获取/缓存打乱选项 =====
+function getShuffledOptions(q) {
+  if (!shuffledCache[q.id]) {
+    shuffledCache[q.id] = App.shuffleOptions(q);
+  }
+  return shuffledCache[q.id];
+}
+function renderSingleOptions(isAnswered) {
   const q = currentQuestion;
   const optsDiv = document.getElementById('qOptions');
-  // 打乱选项
-  const shuffleResult = App.shuffleOptions(q);
-  shuffledOptMap = shuffleResult.map;
-  shuffledNewAnswer = shuffleResult.newAnswer;
+  const shuffleResult = getShuffledOptions(q);
   const options = shuffleResult.options;
+  const newAnswer = shuffleResult.newAnswer;
   optsDiv.innerHTML = options.map((opt, i) => {
     let cls = 'option-btn';
-    const userAns = answeredState(q.id);
-    if (userAns !== undefined) {
-      if (opt.key === shuffledNewAnswer) cls += ' correct';
-      if (opt.key === userAns && opt.key !== shuffledNewAnswer) cls += ' wrong';
+    if (isAnswered) {
+      const correct = answered[q.id];
+      if (opt.key === newAnswer) cls += ' correct';
+      if (!correct && opt.key === getUserSelectedKey(q.id)) cls += ' wrong';
     }
-    const disabled = userAns !== undefined ? 'disabled' : '';
+    const disabled = isAnswered ? 'disabled' : '';
     return `<button class="${cls}" ${disabled} onclick="submitSingle('${opt.key}')">
       <strong>${i + 1}.</strong> ${opt.text}
     </button>`;
   }).join('');
 }
-function renderJudgeButtons(answered) {
+// 存储用户选择的展示key
+let userSelectedKeys = {}; // { qid: displayedKey }
+function getUserSelectedKey(qid) {
+  return userSelectedKeys[qid];
+}
+function renderJudgeButtons(isAnswered) {
   const q = currentQuestion;
   const optsDiv = document.getElementById('qOptions');
-  const userAns = answeredState(q.id);
   const correctAns = q.answer;
-  const clsA = userAns !== undefined ? (correctAns === 'A' ? 'judge-btn correct' : (userAns === 'A' ? 'judge-btn wrong' : 'judge-btn')) : 'judge-btn';
-  const clsB = userAns !== undefined ? (correctAns === 'B' ? 'judge-btn correct' : (userAns === 'B' ? 'judge-btn wrong' : 'judge-btn')) : 'judge-btn';
-  const disabled = userAns !== undefined ? 'disabled' : '';
+  let clsA = 'judge-btn';
+  let clsB = 'judge-btn';
+  if (isAnswered) {
+    const correct = answered[q.id];
+    clsA += correctAns === 'A' ? ' correct' : (correct === false && userSelectedKeys[q.id] === 'A' ? ' wrong' : '');
+    clsB += correctAns === 'B' ? ' correct' : (correct === false && userSelectedKeys[q.id] === 'B' ? ' wrong' : '');
+  }
+  const disabled = isAnswered ? 'disabled' : '';
   optsDiv.innerHTML = `
     <div class="btn-group" style="justify-content:center;padding:16px 0;">
       <button class="${clsA}" ${disabled} onclick="submitJudge('A')" style="background:var(--success);color:#fff;border-color:var(--success);">✅ 对 (Z)</button>
       <button class="${clsB}" ${disabled} onclick="submitJudge('B')" style="background:var(--danger);color:#fff;border-color:var(--danger);">❌ 错 (X)</button>
     </div>`;
 }
-function renderCalcInput(answered) {
+function renderCalcInput(isAnswered) {
+  const q = currentQuestion;
   const optsDiv = document.getElementById('qOptions');
   const calcDiv = document.getElementById('qCalcInput');
   optsDiv.style.display = 'none';
   calcDiv.style.display = '';
-  const userAns = answeredState(q.id);
-  const disabled = userAns !== undefined ? 'disabled' : '';
+  const disabled = isAnswered ? 'disabled' : '';
+  const savedVal = sessionStorage.getItem('calc_input_' + q.id) || '';
   calcDiv.innerHTML = `
-    <textarea class="calc-input" id="calcAnswerInput" ${disabled} placeholder="请输入你的答案（公式、文字描述均可，支持模糊匹配）..."></textarea>
+    <textarea class="calc-input" id="calcAnswerInput" ${disabled} placeholder="请输入你的答案（公式、文字描述均可，支持模糊匹配）...">${isAnswered ? savedVal : ''}</textarea>
     <br>
     <button class="btn btn-primary" ${disabled} onclick="submitCalc()" style="margin-top:8px;">📝 提交答案 (Enter)</button>
   `;
-  if (userAns !== undefined) {
-    document.getElementById('calcAnswerInput').value = userAns;
-  }
-  // 自动focus输入框
   if (!disabled) {
     setTimeout(() => {
       const input = document.getElementById('calcAnswerInput');
-      if (input) input.focus();
+      if (input) {
+        input.value = savedVal;
+        input.focus();
+      }
     }, 100);
   }
 }
-function answeredState(qid) {
-  if (answered[qid] !== undefined) return answered[qid] === true ? currentQuestion.answer : 'wrong-marked';
-  return undefined;
-}
 // ===== 答案提交 =====
-function submitSingle(key) {
+function submitSingle(displayedKey) {
   if (!currentQuestion || answered[currentQuestion.id] !== undefined) return;
   App.cancelDebounce();
-  const userAns = shuffledOptMap ? Object.keys(shuffledOptMap).find(k => shuffledOptMap[k] === key) : key;
-  const correct = App.checkAnswer({ ...currentQuestion, answer: shuffledNewAnswer || currentQuestion.answer }, key);
+  const shuffleResult = getShuffledOptions(currentQuestion);
+  // 将展示key映射回原始key
+  const originalKey = shuffleResult.map ? Object.keys(shuffleResult.map).find(k => shuffleResult.map[k] === displayedKey) : displayedKey;
+  const correct = App.checkAnswer({ ...currentQuestion, answer: shuffleResult.newAnswer || currentQuestion.answer }, displayedKey);
   answered[currentQuestion.id] = correct;
+  userSelectedKeys[currentQuestion.id] = displayedKey;
   const duration = App.stopTimer();
   Storage.addRecord(currentQuestion.id, { correct, duration });
   if (!correct) Storage.addError(currentQuestion.id);
   updateProgress();
   renderSingleOptions(true);
+  // 答后自动显示答案
+  showAnswer = true;
+  updateAnswerDisplay();
   showResultFeedback(correct, duration);
   if (correct) {
-    App.debounceNext(() => nextQuestion(), 300);
+    App.debounceNext(() => nextQuestion(), getDebounceDelay());
   }
 }
 function submitJudge(key) {
@@ -305,14 +348,17 @@ function submitJudge(key) {
   App.cancelDebounce();
   const correct = App.checkAnswer(currentQuestion, key);
   answered[currentQuestion.id] = correct;
+  userSelectedKeys[currentQuestion.id] = key;
   const duration = App.stopTimer();
   Storage.addRecord(currentQuestion.id, { correct, duration });
   if (!correct) Storage.addError(currentQuestion.id);
   updateProgress();
   renderJudgeButtons(true);
+  showAnswer = true;
+  updateAnswerDisplay();
   showResultFeedback(correct, duration);
   if (correct) {
-    App.debounceNext(() => nextQuestion(), 300);
+    App.debounceNext(() => nextQuestion(), getDebounceDelay());
   }
 }
 function submitCalc() {
@@ -324,6 +370,7 @@ function submitCalc() {
   }
   App.cancelDebounce();
   const userAns = input.value.trim();
+  sessionStorage.setItem('calc_input_' + currentQuestion.id, userAns);
   const correct = App.checkAnswer(currentQuestion, userAns);
   answered[currentQuestion.id] = correct;
   const duration = App.stopTimer();
@@ -331,10 +378,12 @@ function submitCalc() {
   if (!correct) Storage.addError(currentQuestion.id);
   updateProgress();
   renderCalcInput(true);
-  document.getElementById('calcAnswerInput').value = userAns;
+  // 答后自动显示答案
+  showAnswer = true;
+  updateAnswerDisplay();
   showResultFeedback(correct, duration);
   if (correct) {
-    App.debounceNext(() => nextQuestion(), 300);
+    App.debounceNext(() => nextQuestion(), getDebounceDelay());
   }
 }
 function showResultFeedback(correct, duration) {
@@ -350,47 +399,50 @@ function showResultFeedback(correct, duration) {
 function handleShortcut(e) {
   if (!currentQuestion) return;
   const key = e.key;
-  e.preventDefault();
   if (currentQuestion.type === 'single') {
     if (['1', '2', '3', '4'].includes(key)) {
+      e.preventDefault();
       const opts = document.querySelectorAll('#qOptions .option-btn');
       const idx = parseInt(key) - 1;
       if (opts[idx] && !opts[idx].disabled) opts[idx].click();
     }
   } else if (currentQuestion.type === 'judge') {
-    if (key === 'z' || key === 'Z') { const btn = document.querySelector('#qOptions .judge-btn:first-child'); if (btn && !btn.disabled) btn.click(); }
-    if (key === 'x' || key === 'X') { const btn = document.querySelector('#qOptions .judge-btn:last-child'); if (btn && !btn.disabled) btn.click(); }
+    if (key === 'z' || key === 'Z') { e.preventDefault(); const btn = document.querySelector('#qOptions .judge-btn:first-child'); if (btn && !btn.disabled) btn.click(); }
+    if (key === 'x' || key === 'X') { e.preventDefault(); const btn = document.querySelector('#qOptions .judge-btn:last-child'); if (btn && !btn.disabled) btn.click(); }
   } else if (currentQuestion.type === 'calc') {
-    if (key === 'Enter') submitCalc();
+    if (key === 'Enter' && document.activeElement === document.getElementById('calcAnswerInput')) {
+      e.preventDefault();
+      submitCalc();
+    }
   }
   if (key === ' ') { e.preventDefault(); toggleAnswer(); }
-  if (key === 'ArrowLeft') prevQuestion();
-  if (key === 'ArrowRight') nextQuestion();
+  if (key === 'ArrowLeft') { e.preventDefault(); prevQuestion(); }
+  if (key === 'ArrowRight') { e.preventDefault(); nextQuestion(); }
 }
 // ===== 题目导航 =====
 function prevQuestion() {
   App.cancelDebounce();
   App.stopTimer();
   if (currentIndex > 0) currentIndex--; else currentIndex = questions.length - 1;
-  showAnswer = false;
+  showAnswer = answered[questions[currentIndex]?.id] !== undefined;
   renderQuestion();
 }
 function nextQuestion() {
   App.cancelDebounce();
   App.stopTimer();
   if (currentIndex < questions.length - 1) currentIndex++; else currentIndex = 0;
-  showAnswer = false;
+  showAnswer = answered[questions[currentIndex]?.id] !== undefined;
   renderQuestion();
 }
 function toggleAnswer() {
   showAnswer = !showAnswer;
   const ansDiv = document.getElementById('qAnswer');
   const explDiv = document.getElementById('qExplanation');
-  ansDiv.style.display = showAnswer ? '' : 'none';
-  explDiv.style.display = showAnswer && currentQuestion && currentQuestion.explanation ? '' : 'none';
-  if (showAnswer && currentQuestion) {
-    ansDiv.innerHTML = '<strong>参考答案：</strong>' + (currentQuestion.type === 'single' ? currentQuestion.answer : currentQuestion.type === 'judge' ? (currentQuestion.answer === 'A' ? '对' : '错') : currentQuestion.answer);
-    if (currentQuestion.explanation) explDiv.innerHTML = '<strong>解析：</strong>' + currentQuestion.explanation;
+  if (showAnswer) {
+    updateAnswerDisplay();
+  } else {
+    ansDiv.style.display = 'none';
+    explDiv.style.display = 'none';
   }
 }
 // ===== 进度 =====
@@ -427,6 +479,8 @@ function toggleHistory() {
 function resetSession() {
   App.showModal('重置本次练习', '确定要清空本次刷题痕迹吗？答题记录不会被删除。', () => {
     answered = {};
+    userSelectedKeys = {};
+    shuffledCache = {};
     showAnswer = false;
     currentIndex = 0;
     App.resetTimer();
@@ -449,7 +503,6 @@ function exitQuiz() {
       App.stopTimer();
       window.location.href = 'index.html';
     }, '清空并退出', true);
-    // 添加保留按钮逻辑 - 简化处理
     setTimeout(() => {
       const overlay = document.querySelector('.modal-overlay');
       if (overlay && overlay.classList.contains('active')) {
@@ -466,7 +519,7 @@ function exitQuiz() {
   }
 }
 // ===== 初始化 =====
-document.addEventListener('DOMContentLoaded', initExam);
+document.addEventListener('DOMContentLoaded', () => initExam(false));
 </script>
 </body>
 </html>

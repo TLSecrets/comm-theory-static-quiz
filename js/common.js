@@ -306,8 +306,10 @@ const App = (() => {
   }
   function renderImage(imagePath) {
     if (!imagePath) return '';
-    return `<div class="img-placeholder">📷 加载中...</div>
-            <img class="q-image" src="images/${imagePath}" alt="题图" onerror="this.style.display='none';this.previousElementSibling.innerHTML='📷 图片加载失败'">`;
+    var clean = imagePath.replace(/^[\\/]+/, '').replace(/^images[\\/]/i, '');
+    return '<div class="img-placeholder"></div>' +
+      '<img class="q-image" src="images/' + clean + '" alt="题图" ' +
+      'onerror="this.style.display=\'none\';var p=this.parentElement.querySelector(\'.img-placeholder\');if(p)p.innerHTML=\'📷 图片加载失败\';this.remove();">'
   }
   // ===== 薄弱题筛选 =====
   function getWeakQuestions(threshold) {
