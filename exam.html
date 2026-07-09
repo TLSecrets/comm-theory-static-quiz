@@ -97,6 +97,14 @@ function initExam(keepFilter) {
       App.showToast('暂无薄弱题目，请先刷题积累数据', 'error');
       allQuestions = App.validQuestions();
     }
+  } else if (modeParam === 'collect') {
+    const collected = Storage.getCollect();
+    const allQ = App.validQuestions();
+    allQuestions = allQ.filter(q => collected.hasOwnProperty(q.id));
+    if (allQuestions.length === 0) {
+      App.showToast('暂无收藏题目，请先去收藏题目', 'error');
+      allQuestions = allQ;
+    }
   } else {
     allQuestions = App.validQuestions();
   }
@@ -232,7 +240,10 @@ function updateAnswerDisplay() {
   } else if (q.type === 'judge') {
     ansDiv.innerHTML = '<strong>参考答案：</strong>' + (q.answer === 'A' ? '对 ✓' : '错 ✗');
   } else {
-    ansDiv.innerHTML = '<strong>参考答案：</strong>' + q.answer;
+    // 单选题使用打乱后的映射答案字母（与展示的选项字母对应）
+    const shuffled = getShuffledOptions(q);
+    const displayAns = shuffled.newAnswer || q.answer;
+    ansDiv.innerHTML = '<strong>参考答案：</strong>' + displayAns;
   }
   if (q.explanation) explDiv.innerHTML = '<strong>解析：</strong>' + q.explanation;
   ansDiv.style.display = '';
