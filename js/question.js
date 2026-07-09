@@ -89,7 +89,6 @@ const questionList = [
     image: ''
   },
   {
-      {
     id: 7,
     type: 'judge',
     chapter: '第1-2章小测',
@@ -98,7 +97,8 @@ const questionList = [
     explanation: '',
     image: ''
   },
-id: 8,
+  {
+    id: 8,
     type: 'judge',
     chapter: '第1-2章小测',
     question: '高斯白噪声通常是指噪声的功率谱密度服从高斯分布（ ）。',
