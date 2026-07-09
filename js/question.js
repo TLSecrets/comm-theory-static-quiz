@@ -455,7 +455,7 @@ const questionList = [
     id: 40,
     type: 'single',
     chapter: '第6-8章小测',
-    question: '已知某信号的时域表达式为 ，对此信号取样时，其Nyquist取样速率fs 应取',
+    question: '已知某信号的时域表达式为m(t)=200Sa2(200πt)，对此信号取样时，其Nyquist取样速率fs 应取',
     options: [
       { key: 'A', text: '100Hz' },
       { key: 'B', text: '200Hz' },
@@ -470,7 +470,7 @@ const questionList = [
     id: 41,
     type: 'single',
     chapter: '第6-8章小测',
-    question: '已知某信号的时域表达式为，当采用取样速率fs =500Hz对此信号取样时，要恢复原信号，低通滤波器的截止频率应选',
+    question: '已知某信号的时域表达式为m(t)=200Sa2(200πt)，当采用取样速率fs =500Hz对此信号取样时，要恢复原信号，低通滤波器的截止频率应选',
     options: [
       { key: 'A', text: '100-200Hz' },
       { key: 'B', text: '200-300Hz' },
